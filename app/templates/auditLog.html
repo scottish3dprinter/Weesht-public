@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Audit logs - Weesht{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Audit Logs</h2> 
+    <table>
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>username</th>
+                <th>action</th>
+                <th>date_time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log["id"] }}</td>
+                    <td>{{ log["username"]}}</td>
+                    <td>{{ log["action"]}}</td>
+                    <td>{{ log["date_time"]}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</section>
+{% endblock %}

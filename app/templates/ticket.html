@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket - Weesht{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Ticket - {{ ticket["request_title"] }}</h2>
+
+    <div>
+        <a href="{{ url_for('main.tickets') }}">All Tickets</a>
+    </div>
+
+    {% if ticket %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Requester</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ ticket["request_title"] }}</td>
+                    <td>{{ ticket["username"] }}</td>
+                    <td>{{ ticket["resolver_username"] or "Open" }}</td>
+                    <td>{{ ticket["create_date"] }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <hr>
+        <h3>Update Ticket</h3>
+        <form method="post" action="{{ url_for('main.updateticket') }}">
+            <input type="hidden" name="request_id" value="{{ ticket['request_id'] }}">
+            <label>
+                Title
+                <input type="text" name="title" value="{{ ticket['request_title'] }}" required>
+            </label>
+            <label>
+                Description
+                <input type="text" name="description" value="{{ ticket['request_body'] }}" required>
+            </label>
+            <button type="submit">Save Ticket</button>
+        </form>
+
+        <hr>
+        <h3>Remove Ticket</h3>
+        <form method="post" action="{{ url_for('main.removeticket') }}">
+            <input type="hidden" name="request_id" value="{{ ticket['request_id'] }}">
+            <button type="submit">Delete Ticket</button>
+        </form>
+
+        <hr>
+        <h3>Messages</h3>
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>
+                        <strong>{{ message["username"] }}</strong>
+                        ({{ message["create_date"] }}):
+                        {{ message["message_body"] }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No messages yet.</p>
+        {% endif %}
+
+        <h3>Add Message</h3>
+        <form method="post" action="{{ url_for('main.add_message', requestID=ticket['request_id']) }}">
+            <label>
+                Message
+                <input type="text" name="message" required>
+            </label>
+            <button type="submit">Send Message</button>
+        </form>
+    {% else %}
+        <p>No ticket found {{ ticket["request_id"] }}.</p>
+    {% endif %}
+</section>
+{% endblock %}

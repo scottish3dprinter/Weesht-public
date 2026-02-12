@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Add Ticket - Weesht{% endblock %}
+
+{% block content %}
+    <section>
+        <h2>Add Ticket</h2>
+        <p>Fill out the details below to create a new ticket.</p>
+
+        <form method="post" action="{{ url_for('main.addticket') }}">
+            <label>
+                Title
+                <input type="text" name="title" autocomplete="off" required>
+            </label>
+            <label>
+                Descripton
+                <input type="text" name="description" autocomplete="off" required>
+            </label>
+            <label>
+                Resolver
+                <select name="resolver_username" required>
+                    <option value="" selected disabled>Select a resolver</option>
+                    {% for resolver in resolvers %}
+                        <option value="{{ resolver['username'] }}">{{ resolver["username"] }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit">Add Ticket</button>
+        </form>
+
+        <p><a href="{{ url_for('main.tickets') }}">Back to all tickets</a></p>
+    </section>
+{% endblock %}

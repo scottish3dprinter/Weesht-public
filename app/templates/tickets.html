@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Tickets - Weesht{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Tickets</h2>
+    <p>Review and manage submitted tickets.</p>
+
+    <div>
+        <a href="{{ url_for('main.addticket') }}">Add Ticket</a>
+    </div>
+
+    <h3>Ticket List</h3>
+    {% if tickets %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Requester</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                    <tr>
+                        <td><a href="{{ url_for('main.ticket', requestID=ticket['request_id']) }}"> {{ticket["request_title"] }}</a></td>
+                        <td>{{ ticket["username"] }}</td>
+                        <td>{{ ticket["resolver_username"] or "Open" }}</td>
+                        <td>{{ ticket["create_date"] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tickets found yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Add User - Weesht{% endblock %}
+
+{% block content %}
+    <section>
+        <h2>Add User</h2>
+        <p>Fill out the details below to create a new user.</p>
+
+        <form method="post" action="{{ url_for('main.adduser') }}">
+            <label>
+                Username
+                <input type="text" name="username" autocomplete="off" required>
+            </label>
+            <label>
+                Email
+                <input type="email" name="email" autocomplete="off">
+            </label>
+            <label>
+                Level
+                <input type="number" name="level" min="0">
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" required>
+            </label>
+            <button type="submit">Add User</button>
+        </form>
+
+        <p><a href="{{ url_for('main.admin') }}">Back to admin</a></p>
+    </section>
+{% endblock %}

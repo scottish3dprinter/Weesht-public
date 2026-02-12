@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Weesht{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Weesht</h1>
+        {% if message %}
+            <p><strong>{{ message }}</strong></p>
+        {% endif %}
+        {% if error %}
+            <p><strong>{{ error }}</strong></p>
+        {% endif %}
+	<nav> 
+        <a href="{{url_for('main.index')}}">Home</a>
+		{% if session.get("user") %}
+        <a href="{{url_for('main.tickets')}}">Tickets</a>
+        {% if session.get("level") == 0 %}
+		<a href="{{ url_for('main.admin') }}">Admin</a>
+		<a href="{{ url_for('main.adduser') }}">Add User</a>
+		<a href="{{ url_for('main.auditlog') }}">Audit Log</a>
+		{% endif %}
+		<span>User: {{session.get("user") }}</span>
+        <a href="{{url_for('main.updatepassword')}}">Update Password</a>
+        <form method="post" action="{{ url_for('main.logout') }}">
+			<button type="submit">Logout</button>
+		</form>
+		{% else %}
+		<a href="{{ url_for('main.login') }}">Login</a>
+		{% endif %}
+	</nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
+
