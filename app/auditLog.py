@@ -1,6 +1,6 @@
 from .db import getDBconnection
 
-def newAuditLog(username: str, action: str):
+def newAuditLog(username, action):
     connection = getDBconnection()
     try:
         connection.execute(

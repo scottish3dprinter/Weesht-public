@@ -2,10 +2,71 @@ from flask import Blueprint, redirect, render_template, request, session, url_fo
 from werkzeug.security import check_password_hash, generate_password_hash
 import secrets
 from .db import getDBconnection
-from .emailController import send_password_reset_email, send_welcome_email
+from .emailController import send_password_reset_email, send_welcome_email, send_ticket_update_email, send_new_ticket_email
 from .auditLog import newAuditLog
+from .openAI import openAIapicall
 
 main = Blueprint('main', __name__)
+DEFAULT_RESOLVER_USERNAME = "Auto assign resolver"
+
+support_types = {
+    "network support",
+    "system support",
+    "desktop support",
+    "hardware support",
+    "installation support",
+    "general support"
+}
+
+def detect_support_type(title, description, id):
+    openAI_response = openAIapicall(title, description)
+    if openAI_response["resolver_team"] in support_types:
+        newAuditLog(session.get("user"), f"OpenAI detected support type {openAI_response['resolver_team']} for ticket with title: {title}")
+        connection = getDBconnection()
+        try:
+            connection.execute(
+                """
+                UPDATE requests
+                SET detected_support_type = ?, priority = ?, reason = ?, category = ?
+                WHERE request_id = ?
+                """,
+                (openAI_response["resolver_team"], openAI_response["priority"], openAI_response["reason"], openAI_response["category"], id)
+            )
+            resolver = connection.execute(
+                "SELECT resolver_username FROM requests WHERE request_id = ?",
+                (id,)).fetchone()
+            if resolver and resolver["resolver_username"] == DEFAULT_RESOLVER_USERNAME:
+                auto_email_resolvers(connection, DEFAULT_RESOLVER_USERNAME, openAI_response["resolver_team"])
+            
+            
+            connection.commit()
+        finally:
+            connection.close()
+        
+        return openAI_response
+    newAuditLog(session.get("user"), f"OpenAI failed to detect support type for ticket with title: {title}, it returned {openAI_response}")
+    return None
+
+def auto_email_resolvers(connection, id, detected_support_type):
+    user_columns = {
+        column["name"]
+        for column in connection.execute("PRAGMA table_info(users)").fetchall()
+    }
+
+    candidates = connection.execute(
+        """
+        SELECT username, email_address
+        FROM users
+        WHERE level = 1 AND support_type = ?
+        ORDER BY username
+        """,
+        (detected_support_type,),
+    ).fetchall()
+    if not candidates:
+        return None
+
+    for candidate in candidates:
+        send_new_ticket_email(candidate["email_address"], candidate["username"], id, detected_support_type)
 
 @main.route("/")
 def index():
@@ -37,8 +98,10 @@ def ownsTheTicketOrIsAdminGuard(request_id):
         ).fetchone()
     finally:
         connection.close()
+    if ticketUsername is None:
+        return redirect(url_for("main.index", error="Ticket not found"))
     if session.get("user") != ticketUsername["username"] and session.get("user") != ticketUsername["resolver_username"]:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("main.index", error="Access denied"))
     return None
     
 #routes for user control
@@ -62,8 +125,9 @@ def login():
         if user and check_password_hash(user["password_hash"], password):
             session["user"] = username
             session["level"] = user["level"]
+            newAuditLog(username, "Login")
             return redirect(url_for("main.index"))
-        error = "Invalid credentials. Please contact an admin with code (5)."
+        error = "Invalid credentials. Please contact an admin with code."
     return render_template("login.html", error=error)
 
 @main.route("/logout", methods=["POST"])
@@ -114,7 +178,7 @@ def updatepassword():
         newAuditLog(username, "Password updated")
     return redirect(url_for("main.index", message="Your password has been updated"))
 
-@main.route("/forgotpassword")
+@main.route("/forgotpassword", methods=["GET", "POST"])
 def forgotPassword():
     if request.method == "GET":
         return render_template("forgotPassword.html")
@@ -123,6 +187,7 @@ def forgotPassword():
         return render_template("forgotPassword.html", error="email is required")
 
     connection = getDBconnection()
+    user = None
     try:
         user = connection.execute(
             "SELECT username, email_address FROM users WHERE email_address = ?",
@@ -132,17 +197,19 @@ def forgotPassword():
         if user:
             tempPass = secrets.token_urlsafe(16)
             tempPassHash = generate_password_hash(tempPass)
-        connection.execute(
-            "UPDATE users SET password_hash = ? WHERE username = ?",
-            (tempPassHash, user["username"]),
-        )
-        connection.commit()
-        if not send_password_reset_email(user["email_address"], user["username"], tempPass):
-            return render_template("forgotPassword.html", error="Failed to send email")
+            connection.execute(
+                "UPDATE users SET password_hash = ? WHERE username = ?",
+                (tempPassHash, user["username"]),
+            )
+            connection.commit()
+            if not send_password_reset_email(user["email_address"], user["username"], tempPass):
+                return render_template("forgotPassword.html", error="Failed to send email")
     finally:
         connection.close()
-        newAuditLog(user["username"], "Temporary password issued via forgot password")
+        if user:
+            newAuditLog(user["username"], "Temporary password issued via forgot password")
     return render_template("login.html", message="temporary password has been sent to your email")
+
 #Routes for Admins
 @main.route("/admin")
 def admin():
@@ -153,7 +220,7 @@ def admin():
     connection = getDBconnection()
     try:
         users = connection.execute(
-            "SELECT username, password_hash, level, email_address, create_date FROM users ORDER BY create_date DESC"
+            "SELECT username, password_hash, level, support_type, email_address, create_date FROM users ORDER BY create_date DESC"
         ).fetchall()
     finally:
         connection.close()
@@ -180,7 +247,7 @@ def removeuser():
     if guard is not None:
         return guard
     # TODO: remove the user
-    return render_template("admin.html")
+    return redirect(url_for("main.admin"))
 
 @main.route("/admin/adduser", methods=["GET", "POST"])
 def adduser():
@@ -189,49 +256,58 @@ def adduser():
         return guard
 
     if request.method == "GET":
-        return render_template("newUser.html")
+        return render_template("newUser.html", support_types=support_types)
     
     username = request.form.get("username", "").strip()
     email = request.form.get("email", "").strip() or None
     level_raw = request.form.get("level", "").strip()
+    support_type = request.form.get("support_type", "").strip() or None
     password = request.form.get("password", "")
     error = None
+    user_created = False
 
     if not username or not password:
-        error = "Username and password are required."
+        return render_template("newUser.html", error="Username and password are required.", support_types=support_types)
     else:
         try:
             level = int(level_raw) if level_raw else None
         except ValueError:
             level = None
-            error = "Level must be a number."
+            return render_template("newUser.html", error="Level must be a number.", support_types=support_types)
 
-    if error is None:
-        connection = getDBconnection()
-        try:
-            existing = connection.execute(
-                "SELECT 1 FROM users WHERE username = ?",
-                (username,),
-            ).fetchone()
-            if existing:
-                error = "That username is already taken."
-            else:
-                password_hash = generate_password_hash(password)
-                connection.execute(
-                    """
-                    INSERT INTO users (username, password_hash, level, email_address)
-                    VALUES (?, ?, ?, ?)
-                    """,
-                    (username, password_hash, level, email),
-                )
-                connection.commit()
-                return redirect(url_for("main.adduser", message=f"User {username} created"))
-        finally:
-            connection.close()
+    if not email:
+        return render_template("newUser.html", error="Email is required", support_types=support_types)
+
+    if level == 1:
+        if support_type not in support_types:
+            return render_template("newUser.html", error="Level 1 users must have a support type", support_types=support_types)
+    connection = getDBconnection()
+    try:
+        existing = connection.execute(
+            "SELECT 1 FROM users WHERE username = ?",
+            (username,),
+        ).fetchone()
+        if existing:
+            error = "That username is already taken."
+        else:
+            password_hash = generate_password_hash(password)
+            connection.execute(
+                """
+                INSERT INTO users (username, password_hash, level, email_address, support_type)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (username, password_hash, level, email, support_type),
+            )
+            connection.commit()
+            user_created = True
+            return redirect(url_for("main.adduser", message=f"User {username} created"))
+    finally:
+        connection.close()
+        if user_created:
             newAuditLog(session.get("user"), f"Added user {username}")
             send_welcome_email(email, username)
 
-    return render_template("newUser.html", error=error)
+    return render_template("newUser.html", error=error, support_types=support_types)
 
 #Routes for ticket management
 @main.route("/tickets")
@@ -274,7 +350,7 @@ def ticket(requestID):
     connection = getDBconnection()
     try:
         ticketData = connection.execute(
-            "SELECT request_id, request_title, request_body, username, resolver_username, create_date FROM requests WHERE request_id = ?",
+            "SELECT request_id, request_title, request_body, username, resolver_username, create_date, open_close_status, close_date, detected_support_type, priority, reason, category FROM requests WHERE request_id = ?",
             (requestID,),
         ).fetchone()
 
@@ -294,6 +370,31 @@ def ticket(requestID):
         return render_template("tickets.html", error=f"ticket was not found {requestID}")
 
     return render_template("ticket.html", ticket=ticketData, messages=messages)
+
+@main.route("/closeticket", methods=["POST"])
+def closeticket():
+    request_id_raw = request.form.get("request_id", "").strip()
+    if not request_id_raw.isdigit():
+        return redirect(url_for("main.tickets", error="Invalid ticket id"))
+    request_id = int(request_id_raw)
+    guard = ownsTheTicketOrIsAdminGuard(request_id)
+    if guard is not None:
+        return guard
+    connection = getDBconnection()
+    try:
+        connection.execute(
+            """
+            UPDATE requests
+            SET open_close_status = 0, close_date = CURRENT_TIMESTAMP
+            WHERE request_id = ?
+            """,
+            (request_id,),
+        )
+        connection.commit()
+    finally:
+        connection.close()
+    newAuditLog(session.get("user"), f"Closed ticket with id {request_id}")
+    return redirect(url_for("main.ticket", requestID=request_id))
 
 @main.route("/ticket/<int:requestID>/message", methods=["POST"])
 def add_message(requestID):
@@ -326,6 +427,8 @@ def addticket():
     if guard is not None:
         return guard
 
+    ticket_added = False
+
     connection = getDBconnection()
     try:
         resolvers = connection.execute(
@@ -343,21 +446,31 @@ def addticket():
         if not title or not description or not resolver_username:
             return render_template("addTicket.html", error="Title, description and resolver username are required")
 
-        connection.execute(
+        newRow = connection.execute(
             """
             INSERT INTO requests (request_title, username, request_body, resolver_username)
             VALUES (?, ?, ?, ?)
             """,
             (title, session.get("user"), description, resolver_username)
         )
+        id = newRow.lastrowid
+        ticket_added = True
         connection.commit()
     finally:
         connection.close()
+        if ticket_added:
+            detect_support_type(title, description, id)
+    newAuditLog(session.get("user"), "ticket created")
     return redirect(url_for("main.tickets", message="Ticket created"))
-    
+   
 @main.route("/removeticket", methods=["POST"])
 def removeticket():
-    guard = ownsTheTicketOrIsAdminGuard()
+    request_id_raw = request.form.get("request_id", "").strip()
+    if not request_id_raw.isdigit():
+        return redirect(url_for("main.tickets", error="Invalid ticket id"))
+
+    request_id = int(request_id_raw)
+    guard = ownsTheTicketOrIsAdminGuard(request_id)
     if guard is not None:
         return guard
     
@@ -366,7 +479,12 @@ def removeticket():
 
 @main.route("/updateticket", methods=["POST"])
 def updateticket():
-    guard = ownsTheTicketOrIsAdminGuard()
+    request_id_raw = request.form.get("request_id", "").strip()
+    if not request_id_raw.isdigit():
+        return redirect(url_for("main.tickets", error="Invalid ticket id"))
+
+    request_id = int(request_id_raw)
+    guard = ownsTheTicketOrIsAdminGuard(request_id)
     if guard is not None:
         return guard
     

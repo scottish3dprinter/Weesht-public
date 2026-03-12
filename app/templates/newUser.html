@@ -18,7 +18,21 @@
             </label>
             <label>
                 Level
-                <input type="number" name="level" min="0">
+                <select name="level">
+                    <option value="">Select user type</option>
+                    <option value="0">Admin</option>
+                    <option value="1">Resolver</option>
+                    <option value="2">User</option>
+                </select>
+            </label>
+            <label>
+                Support type
+                <select name="support_type">
+                    <option value="">Select support type</option>
+                    {% for support in support_types %}
+                        <option value="{{ support }}">{{ support }}</option>
+                    {% endfor %}
+                </select>
             </label>
             <label>
                 Password

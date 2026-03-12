@@ -1,0 +1,210 @@
+WiFi not working I updated my system and the internet stopped working when it rebooted
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "System update broke WiFi on reboot, leaving the user without internet access."
+}
+forgotten password I need you to reset my password
+{
+"category": "user accounts",
+"priority": 1,
+"resolver_team": "system support",
+"reason": "User forgot their password and requires a reset to regain access to their account."
+}
+install software problem I need to install chrome
+{
+"category": "package management",
+"priority": 3,
+"resolver_team": "desktop support",
+"reason": "User requests installation of the Chrome browser on their desktop."
+}
+log in issue I can not log in to the system help
+{
+"category": "user accounts",
+"priority": 1,
+"resolver_team": "system support",
+"reason": "User cannot log in to the system and is unable to access their account."
+}
+internet my system is not on the internet help
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "No internet connectivity from the system; requires network troubleshooting."
+}
+PC wont turn on when I press the power button nothing comes on
+{
+"category": "hardware",
+"priority": 1,
+"resolver_team": "hardware support",
+"reason": "PC does not power on at all when power button pressed — system unusable, likely hardware/power fault."
+}
+my document say I don’t have permission to open it my document say I don’t have permission to open it
+{
+"category": "user accounts",
+"priority": 3,
+"resolver_team": "desktop support",
+"reason": "User cannot open a document due to file permission/ownership issues — needs permissions adjusted or access granted."
+}
+the web browser is not working I cant search the internet
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "User cannot access the internet from their web browser; likely a network/connectivity issue."
+}
+I need to set up a new laptop I have just bought a new laptop and need to get it set up
+{
+"category": "installation",
+"priority": 3,
+"resolver_team": "installation support",
+"reason": "New laptop requires initial setup and configuration (OS, accounts, software); non-urgent onboarding request."
+}
+Wi-Fi works for a few minutes every few minutes I need to reconnect to the wifi
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "Wi‑Fi repeatedly drops every few minutes requiring manual reconnects; unstable wireless connectivity."
+}
+slow after update my computer is very slow after updating over night
+{
+"category": "system performance",
+"priority": 3,
+"resolver_team": "system support",
+"reason": "System significantly slower after overnight update; performance degradation following recent system update."
+}
+APT install error I am trying to install a system package with APT and I am getting an error
+{
+"category": "package management",
+"priority": 3,
+"resolver_team": "system support",
+"reason": "APT package installation is failing with an error; package manager issue preventing install."
+}
+USB stick is not working I am plugging my usb drive in to my laptop I cant open it
+{
+"category": "hardware",
+"priority": 3,
+"resolver_team": "desktop support",
+"reason": "User's USB flash drive is not accessible when plugged into laptop — needs troubleshooting for recognition, mounting, drivers or faulty port/device."
+}
+screen is wrong size my screen is the wrong size
+{
+"category": "system settings",
+"priority": 3,
+"resolver_team": "desktop support",
+"reason": "Display resolution or scaling issue causing incorrect screen size; needs desktop support to adjust settings or drivers."
+}
+my resolution is set wrong for my display my screen is the wrong resolution for my display
+{
+"category": "system settings",
+"priority": 3,
+"resolver_team": "desktop support",
+"reason": "Display resolution is incorrect; likely needs screen/display settings or driver adjustment."
+}
+system not booting my system is not booting and is stuck on a black screen
+{
+"category": "installation",
+"priority": 1,
+"resolver_team": "system support",
+"reason": "Machine fails to boot and is stuck on a black screen — system unusable, needs immediate investigation."
+}
+keyboard not working my keyboard is not working on my desktop
+{
+"category": "hardware",
+"priority": 2,
+"resolver_team": "hardware support",
+"reason": "Desktop keyboard not functioning — likely hardware/peripheral failure needing inspection or replacement."
+}
+user password I tried to update my user password but the operation is not permitted
+{
+"category": "user accounts",
+"priority": 3,
+"resolver_team": "system support",
+"reason": "User receives 'operation not permitted' when attempting to change their account password — likely permission or account setting issue."
+}
+running system update I tried to update system packages but it gave multiple errors
+{
+"category": "package management",
+"priority": 3,
+"resolver_team": "system support",
+"reason": "System package update failed with multiple package-manager errors; requires package-management troubleshooting."
+}
+network icon not there the network icon is missing from the bottom right I cant connect to wifi help
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "Network/Wi‑Fi icon missing and user cannot connect to Wi‑Fi; requires network support to restore connectivity/UI indicator."
+}
+shared folder missing I can not access the shared network folder
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "User cannot access a shared network folder — likely network connectivity, share visibility, or permission issue."
+}
+laptop is very hot under normal use my laptop is very hot and the fans are very loud when I am just browsing the web
+{
+"category": "hardware",
+"priority": 3,
+"resolver_team": "hardware support",
+"reason": "Laptop overheating and loud fans during light browsing — likely cooling/thermal issue (fans, dust, thermal paste) needing hardware inspection."
+}
+disk space when I try to download a file I am getting disk space warning
+{
+"category": "system performance",
+"priority": 2,
+"resolver_team": "system support",
+"reason": "User receiving disk space warnings preventing downloads — disk full or quota issue; needs cleanup or storage increase."
+}
+no internet I am connected to wifi but not the internet
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "User is connected to Wi‑Fi but has no internet access; requires network connectivity troubleshooting (gateway/DNS/ISP)."
+}
+ethernet not working I am connected to wifi and thats working fine but I get better speed from the wired connection and thats not working
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "Wired Ethernet connection not working while Wi-Fi works; requires network troubleshooting for the wired interface."
+}
+cannot connect to hotspot I am struggling to connect to my phones hotspot from my laptop
+{
+"category": "networking",
+"priority": 2,
+"resolver_team": "network support",
+"reason": "Laptop cannot connect to phone hotspot — network connectivity issue preventing internet access."
+}
+password rejected I am trying to login to my laptop but is says incorrect password but its the same password I always use
+{
+"category": "user accounts",
+"priority": 1,
+"resolver_team": "desktop support",
+"reason": "User cannot log into laptop due to password being rejected; immediate account/password reset or login troubleshooting needed."
+}
+folder not working I am trying to make a folder on my desktop but its saying permission not allowed
+{
+"category": "user accounts",
+"priority": 3,
+"resolver_team": "desktop support",
+"reason": "Permission denied creating a desktop folder—likely file ownership or permissions on the Desktop directory."
+}
+error when updating when I press the update button I get an error message that there is a broken dependency
+{
+"category": "package management",
+"priority": 3,
+"resolver_team": "system support",
+"reason": "Update fails with a broken dependency error; package dependency resolution/repair needed."
+}
+laptop battery the battery is running out very fast
+{
+"category": "hardware",
+"priority": 3,
+"resolver_team": "hardware support",
+"reason": "Laptop battery draining quickly—likely battery health/degradation or calibration issue needing diagnostics/replacement."
+}

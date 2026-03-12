@@ -27,7 +27,7 @@
                 <tr>
                     <td>{{ user["username"] }}</td>
                     <td>{{ user["email_address"] or "-" }}</td>
-                    <td>{{ user["level"] if user["level"] is not none else "-" }}</td>
+                    <td>{{ user["level"] if user["level"] is not none else "-" }} {{ user["support_type"] or "" }}</td>
                     <td>{{ user["create_date"] }}</td>
                     <td>
                         <form method="post" action="{{ url_for('main.removeuser') }}">

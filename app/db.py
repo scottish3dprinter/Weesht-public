@@ -13,6 +13,17 @@ def getDBconnection():
     return connection
 
 
+def makeUser(connection, name, hash, level):
+    connection.execute(
+        """
+        INSERT INTO users (username, password_hash, level)
+        VALUES (?, ?, ?)
+        ON CONFLICT(username) DO NOTHING;
+        """,
+        (name, hash, level),
+    )
+
+
 def initDB(app):
     dbPath = app.config["SQLITE_DB_PATH"]
     dbDir = os.path.dirname(dbPath)
@@ -29,6 +40,7 @@ def initDB(app):
                 password_hash TEXT NOT NULL,
                 level INTEGER,
                 email_address TEXT,
+                support_type TEXT,
                 create_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
 
@@ -39,6 +51,12 @@ def initDB(app):
                 request_body TEXT NOT NULL,
                 resolver_username TEXT,
                 create_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                open_close_status INTEGER NOT NULL DEFAULT 1,
+                close_date TEXT,
+                detected_support_type TEXT,
+                priority INTEGER,
+                reason TEXT,
+                category TEXT,
                 FOREIGN KEY (username) REFERENCES users(username),
                 FOREIGN KEY (resolver_username) REFERENCES users(username)
             );
@@ -62,18 +80,13 @@ def initDB(app):
             );
             """
         )
-
         default_admin_username = os.environ.get("DEFAULT_ADMIN_USERNAME", "admin")
         default_admin_password = os.environ.get("DEFAULT_ADMIN_PASSWORD", "password")
         password_hash = generate_password_hash(default_admin_password)
-        connection.execute(
-            """
-            INSERT INTO users (username, password_hash, level)
-            VALUES (?, ?, ?)
-            ON CONFLICT(username) DO NOTHING;
-            """,
-            (default_admin_username, password_hash, 0),
-        )
+        makeUser(connection, default_admin_username, password_hash, 0)
+        makeUser(connection, "Auto assign resolver", "", 1)
+        makeUser(connection, "sys", "", 0)
+        makeUser(connection, os.environ.get("AUTO_REPLY_BOT_USERNAME"), "", 0)
         connection.commit()
     finally:
         connection.close()
