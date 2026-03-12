@@ -86,7 +86,6 @@ def initDB(app):
         makeUser(connection, default_admin_username, password_hash, 0)
         makeUser(connection, "Auto assign resolver", "", 1)
         makeUser(connection, "sys", "", 0)
-        makeUser(connection, os.environ.get("AUTO_REPLY_BOT_USERNAME"), "", 0)
         connection.commit()
     finally:
         connection.close()
