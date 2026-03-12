@@ -34,15 +34,15 @@ def detect_support_type(title, description, id):
             )
             resolver = connection.execute(
                 "SELECT resolver_username FROM requests WHERE request_id = ?",
-                (id,)).fetchone()  
+                (id,)).fetchone()
+            if resolver and resolver["resolver_username"] == DEFAULT_RESOLVER_USERNAME:
+                auto_email_resolvers(connection, DEFAULT_RESOLVER_USERNAME, openAI_response["resolver_team"])
+            
             
             connection.commit()
         finally:
             connection.close()
-
-        if resolver and resolver["resolver_username"] == DEFAULT_RESOLVER_USERNAME:
-            auto_email_resolvers(connection, DEFAULT_RESOLVER_USERNAME, openAI_response["resolver_team"])
-
+        
         return openAI_response
     newAuditLog(session.get("user"), f"OpenAI failed to detect support type for ticket with title: {title}, it returned {openAI_response}")
     return None
@@ -461,7 +461,7 @@ def addticket():
         connection.close()
         if ticket_added:
             detect_support_type(title, description, id)
-            newAuditLog(session.get("user"), "ticket created")
+        newAuditLog(session.get("user"), "ticket created")
    
 @main.route("/removeticket", methods=["POST"])
 def removeticket():
