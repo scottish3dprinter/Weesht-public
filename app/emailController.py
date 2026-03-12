@@ -5,7 +5,7 @@ from email.message import EmailMessage
 from .auditLog import newAuditLog
 
 def send_email(to_email, subject, body):
-    newAuditLog("sys", f"sending email to {to_email}")
+    #newAuditLog("sys", f"sending email to {to_email}")
 
     msg = EmailMessage()
     msg["Subject"] = subject
@@ -19,11 +19,11 @@ def send_email(to_email, subject, body):
     password = os.environ.get("SMTP_PASS") 
 
     if not password:
-        newAuditLog("sys", "failed to send email: SMTP_PASS not set")
+        #newAuditLog("sys", "failed to send email: SMTP_PASS not set")
         return False
 
     try:
-        newAuditLog("sys", f"smtp connect {host}:{port}")
+        #newAuditLog("sys", f"smtp connect {host}:{port}")
         with smtplib.SMTP(host, port, timeout=15) as smtp:
             smtp.set_debuglevel(0)
             #newAuditLog("sys", "smtp starttls")
@@ -33,11 +33,11 @@ def send_email(to_email, subject, body):
             #newAuditLog("sys", "smtp send_message")
             smtp.send_message(msg)
 
-        newAuditLog("sys", "email sent OK")
+        #newAuditLog("sys", "email sent OK")
         return True
 
     except (smtplib.SMTPException, socket.timeout, OSError) as exc:
-        newAuditLog("sys", f"failed to send email: {type(exc).__name__}: {exc}")
+        #newAuditLog("sys", f"failed to send email: {type(exc).__name__}: {exc}")
         return False
 
 
