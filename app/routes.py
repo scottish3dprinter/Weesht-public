@@ -456,12 +456,12 @@ def addticket():
         id = newRow.lastrowid
         ticket_added = True
         connection.commit()
+        return redirect(url_for("main.tickets", message="Ticket created"))
     finally:
         connection.close()
         if ticket_added:
             detect_support_type(title, description, id)
-    newAuditLog(session.get("user"), "ticket created")
-    return redirect(url_for("main.tickets", message="Ticket created"))
+            newAuditLog(session.get("user"), "ticket created")
    
 @main.route("/removeticket", methods=["POST"])
 def removeticket():
