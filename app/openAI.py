@@ -57,6 +57,7 @@ def openAIapicall(title, description):
     }}
 
     Always respond with the JSON object it is not possible to ask for more information from the user.
+    Never use commas in the reason field. If you need to separate multiple points in the reason, use semicolons or periods instead.
 
     If which category the ticket belongs to is not clear from the title and description, choose the most likely category do not return "unclear" or "unknown". If the priority is not clear, choose the lowest priority (4). If the resolver team is not clear, choose the most likely resolver team do not return "unclear" or "unknown".
 
@@ -69,13 +70,23 @@ def openAIapicall(title, description):
     return json.loads(response.output_text)
 
 def csvTestAPI():
-    with open("../weesht/testsAPI/tickets.csv", newline="") as file:
+    results = []
+
+    with open("./testsAPI/tickets.csv", newline="") as file:
         reader = csv.reader(file)
         for row in reader:
-            if len(row) < 3:
+            if len(row) < 6:
+                continue
+            if row[1].strip().lower() == "title":
                 continue
             print(row[1].strip(), row[2].strip())
-            print(openAIapicall(row[1].strip(), row[2].strip()))
+            result = (row[1].strip(), row[2].strip(), openAIapicall(row[1].strip(), row[2].strip()), row[3].strip(), row[4].strip(), row[5].strip())
+            results.append(result)
 
+    with open("./testsAPI/results.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["title", "description", "expected category", "expected priority", "expected resolver_team", "reason", "actual category", "actual priority", "actual resolver_team"])
+        for result in results:
+            writer.writerow([result[0] , result[1], result[2]["category"], result[2]["priority"], result[2]["resolver_team"], result[2]["reason"].replace(',', ';'), result[3], result[4], result[5]])
 if __name__  == "__main__":
     csvTestAPI()
