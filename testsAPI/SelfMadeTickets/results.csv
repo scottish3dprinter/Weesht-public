@@ -1,0 +1,6 @@
+title,description,expected category,expected priority,expected resolver_team,actual category,actual priority,actual resolver_team,reason,category same T/F,resolver same T/F
+WiFi not working,I updated my system and the internet stopped working when it rebooted,networking support,2,network support,networking,2,network support,WiFi stopped working after system update and reboot; no internet connectivity,False,True
+forgotten password,I need you to reset my password,user accounts,1,system support,user accounts,1,system support,User cannot access account due to forgotten password needs password reset,True,True
+install software problem,I need to install chrome,package management support,3,software addition,installation,4,installation support,User requests Chrome installation; standard software install request,False,False
+log in issue,I can not log in to the system help,user accounts,1,system support,user accounts,1,system support,User cannot log in to the system; requires account or authentication troubleshooting,True,True
+internet,my system is not on the internet help,networking support,2,network support,networking,2,network support,No network connectivity; cannot access the internet,False,True

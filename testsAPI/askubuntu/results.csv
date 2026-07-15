@@ -1,0 +1,159 @@
+title,description,expected category,expected priority,expected resolver_team,actual category,actual priority,actual resolver_team,reason,category same T/F,resolver same T/F
+How to list all installed packages,I'd like to output a list of all installed packages into a text file so that I can review it and bulk-install on another system.  How would I do this?,package management,,system support,package management,4,system support,Request to output list of installed packages to a text file for bulk install on another system,True,True
+How to unzip a zip file from the Terminal?,Just downloaded a .zip file from the internet. I want to use the terminal to unzip the file. What is the correct way to do this?,general usage,,general support,general usage,4,general support,User asks for command line instructions to extract a .zip file using the terminal,True,True
+"""The following packages have been kept back:"" Why and how do I solve it?","I just added a PPA repository for the development version of the GIMP, but I get this error:
+$ apt-get update && apt-get upgrade
+...
+The following packages have been kept back:
+  gimp gimp-data libgegl-0.0-0 libgimp2.0
+Why and how can I solve it so that I can use the latest version instead of the one I have now?",package management,,system support,package management,3,system support,Held back due to dependency changes or version conflicts; run apt full-upgrade or apt-get install gimp to install the updated packages; ensure the PPA provides required dependencies,True,True
+How can PPAs be removed?,"I've added many PPAs using the
+add-apt-repository
+command. Is there a simple way to remove these PPAs? I've checked in
+/etc/apt/sources.list
+for the appropriate deb lines but they aren't there.
+This is on a server system so a command line solution would be great!",package management,,system support,package management,4,system support,Remove PPAs added with add-apt-repository via command line on a server,True,True
+How do I install a .deb file via the command line?,"How do I install a
+.deb
+file via the command line?",package management,,system support,package management,4,system support,User requests instructions to install a .deb file via the command line; informational request,True,True
+How do I save terminal output to a file?,"How do I save the output of a command to a file?
+Is there a way without using any software? I would like to know how.",general usage,,general support,general usage,4,general support,User asks how to save terminal command output to a file using built in shell redirection operators,True,True
+How can I copy the contents of a folder to another folder in a different directory using terminal?,"I am trying to copy the contents of a folder to another folder in a different directory using terminal.
+Would somebody be able to provide me an example of the command line syntax required to achieve this?",general usage,,general support,general usage,4,general support,Asking for example command to copy folder contents to another directory using terminal,True,True
+What command do I need to unzip/extract a .tar.gz file?,"I received a huge .tar.gz file from a client that contains about 800 mb of image files (when uncompressed.) Our hosting company's ftp is seriously slow, so extracting all the files locally and sending them up via ftp isn't practical. I was able to ftp the .tar.gz file to our hosting site, but when I ssh into my directory and try using unzip, it gives me this error:
+[esthers@clients locations]$ unzip community_images.tar.gz
+Archive:  community_images.tar.gz
+  End-of-central-directory signature not found.  Either this file is not a zipfile, or it constitutes one disk of a multi-part archive.  In the latter case the central directory and zipfile comment will be found on the last disk(s) of this archive.
+note:  community_images.tar.gz may be a plain executable, not an archive
+unzip:  cannot find zipfile directory in one of community_images.tar.gz or community_images.tar.gz.zip, and cannot find community_images.tar.gz.ZIP, period.
+What command do I need to use to extract all the files in a .tar.gz file?",general usage,,general support,general usage,4,general support,User asks which command to extract a .tar.gz archive via SSH,True,True
+How do I determine the total size of a directory (folder) from the command line?,"Is there a simple command to display the total aggregate size (disk usage) of all files in a directory (folder)?
+I have tried these, and they don't do what I want:
+ls -l
+, which only displays the size of the individual files in a directory, nor
+df -h
+, which only displays the free and used space on my disks.",general usage,,general support,general usage,4,general support,Asking how to get total disk usage of a directory from the command line; needs a command such as du -sh,True,True
+Where is the cron / crontab log?,"I want to verify that my cron job is executing and at what time.  I believe there is a log for my
+sudo crontab -e
+jobs, but where?
+I searched google and found recommendations to look in
+/var/log
+(in which I do not see anything with 'cron' in the name) and to edit the file
+/etc/syslog.conf
+which I also do not have.",general usage,,general support,system settings,4,system support,Cannot find cron log files and syslog configuration; needs help locating or enabling cron logging,False,False
+How can I use Docker without sudo?,"On Docker's documentation pages, all example commands are shown without
+sudo
+, like this one:
+docker ps
+On Ubuntu, the binary is called
+docker.io
+. It also does not work without
+sudo
+:
+sudo docker.io ps
+How can I configure Docker so that I don't need to prefix every Docker command with
+sudo
+?",package management,,system support,user accounts,4,system support,Add your user to the docker group and re-login or restart the session; ensures access to the Docker socket without sudo,False,True
+Unable to lock the administration directory (/var/lib/dpkg/) is another process using it?,"I get this error when trying to use
+apt-get
+:
+E: Could not get lock /var/lib/dpkg/lock - open (11 Resource temporarily unavailable)
+E: Unable to lock the administration directory (/var/lib/dpkg/) is another process using it?
+How can I fix this?",package management,,system support,package management,2,system support,apt cannot acquire /var/lib/dpkg lock; likely another package process running or a stale lock file; needs checking for running apt processes and safe removal of lock,True,True
+How can I update my nodeJS to the latest version?,"I have installed nodeJS on Ubuntu with following code
+sudo apt-get install nodejs
+Since I am a new user for ubuntu I also ran this code too
+sudo apt-get install npm
+Now when I type
+nodejs --version
+It shows
+v0.6.19
+I checked and saw latest nodeJS version is
+0.10.26
+How can I update my version of nodeJS to
+0.10.26
+?
+I tried with
+sudo apt-get install
+sudo apt-get install --only-upgrade
+but no luck.",package management,,system support,package management,4,system support,Request to upgrade nodeJS installed via apt on Ubuntu to a newer version; apt default package is outdated,True,True
+How to upgrade a single package using apt-get?,"How do I update a single package? As far as
+man apt-get
+says
+apt-get upgrade
+doesn't take a package/list of packages as parameter:
+upgrade
+upgrade is used to install the newest versions of all packages
+  currently installed on the system from the sources enumerated in
+/etc/apt/sources.list
+. Packages currently installed with new
+  versions available are retrieved and upgraded; under no circumstances
+  are currently installed packages removed, or packages not already
+  installed retrieved and installed. New versions of currently installed
+  packages that cannot be upgraded without changing the install status
+  of another package will be left at their current version. An update
+  must be performed first so that apt-get knows that new versions of
+  packages are available.",package management,,system support,package management,4,system support,User asks how to upgrade a single package with apt-get; informational how to request,True,True
+"Is there a command to list all users? Also to add, delete, modify users, in the terminal?","I need a command to list all users as well as commands to add, delete and modify users from terminal - any commands that could help in administrating user accounts easily by terminal.",user accounts,,system support,user accounts,4,system support,Request for terminal commands to list add delete and modify user accounts; informational non urgent request,True,True
+How to keep processes running after ending ssh session?,Let's say I launch a bunch of processes from a ssh session. Is it possible to terminate the ssh session while keeping those processes running on the remote machine?,general usage,,general support,general usage,4,system support,User asks how to keep processes running after ending an SSH session; looking for methods such as nohup screen tmux or disown,True,False
+How do I uncompress a tarball that uses .xz?,"I'm used to extracting tarballs with a
+-xfz
+flag, which handles gzip and bzip2 archives.
+Recently I've run into a
+.tar.xz
+file and I would like to uncompress it in one step using
+tar
+, how can I do that?",general usage,,general support,general usage,4,system support,User asks how to extract a .tar.xz file using tar; informational how to request,True,False
+How can I add a user as a new sudoer using the command line?,"After I add a user using
+adduser
+, I can't see it via
+System > Administration > Users and Groups
+unless I log out and then log in again. Is that normal?
+Also, can I set a newly added user as a
+sudo
+er or do I have to change that only after adding it? How can I do that via the shell?
+Finally, can I delete the original user that was created upon initial installation of Ubuntu, or is this user somehow 'special'?",user accounts,,system support,user accounts,4,system support,How to add a user to sudoers via the shell; why the Users and Groups GUI only shows new users after you log out and log back in; whether the initial installation user can be safely deleted,True,True
+How to add a directory to the PATH?,"How do I add a directory to the
+$PATH
+in Ubuntu and make the changes permanent?",system settings,,desktop support,system settings,4,system support,User needs instructions to permanently add a directory to the PATH in Ubuntu,True,False
+How to extract files to another directory using 'tar' command?,"I thought
+tar archive.tar /users/mylocation
+would work, but it doesn't. How can I do that?",general usage,,general support,general usage,4,system support,Asking how to extract a tar archive into a different directory; needs correct tar extraction syntax,True,False
+How do I shut down or reboot from a terminal?,How can I shut down or reboot Ubuntu using terminal commands?,general usage,,general support,system settings,4,system support,User requests terminal commands to shut down or reboot Ubuntu,False,False
+"Error message ""sudo: unable to resolve host (none)""","When I run
+sudo
+the terminal is stuck for a few seconds and then outputs an error message. My terminal looks like this:
+ubuntu@(none):~$ sudo true
+sudo: unable to resolve host (none)
+What can I do to solve it?",general usage,,general support,system settings,4,system support,System hostname not found in /etc/hosts causing sudo to be unable to resolve host; add the hostname to /etc/hosts or correct /etc/hostname,False,False
+How to get bash or ssh into a running container in background mode?,"I want to ssh or bash into a running docker container. Please, see example:
+$ sudo docker run -d webserver
+webserver is clean image from ubuntu:14.04
+$ sudo docker ps
+CONTAINER ID  IMAGE            COMMAND    CREATED STATUS  PORTS          NAMES
+665b4a1e17b6  webserver:latest /bin/bash  ...     ...     22/tcp, 80/tcp loving_heisenberg
+Now I want to get something like this (go into the running container):
+$ sudo docker run -t -i webserver
+(or maybe
+665b4a1e17b6
+instead)
+$ root@665b4a1e17b6:/#
+However when I run the line above I get new CONTAINER ID:
+$ root@42f1e37bd0e5:/#
+I used Vagrant and I'd like to get a  similar behaviour as
+vagrant ssh
+.",general usage,,general support,general usage,4,system support,How to attach or exec into a running Docker container to get an interactive shell similar to vagrant ssh; container was started in detached background mode,True,False
+How to enable or disable services?,"I read about how to enable and disable services in Ubuntu and it seems that there are different possibilities to manage them.
+The first method I found is
+update-rc.d
+to add new services to startup, which aims on the
+/etc/init.d
+folder and its contents.
+The other one I found is to edit
+.conf
+files in the
+/etc/init
+folder.
+What's the recommended way to enable / disable / add services and why?
+Could you please give a short bulletproof step by step example on how to add a service in Ubuntu and enable and disable it?",general usage,,general support,system settings,4,system support,Asking recommended method to add enable and disable services in Ubuntu; requests bulletproof step by step example,False,False
+Find and replace text within a file using commands,How can I find and replace specific words in a text file using command line?,general usage,,general support,general usage,4,system support,User needs command line find and replace guidance; provide examples using sed awk and perl,True,False

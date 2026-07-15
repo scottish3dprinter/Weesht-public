@@ -1,6 +1,7 @@
 from openai import OpenAI
 import csv
 import json
+from pathlib import Path
 
 client = OpenAI()
 
@@ -69,24 +70,39 @@ def openAIapicall(title, description):
 
     return json.loads(response.output_text)
 
-def csvTestAPI():
+def csvTestAPI(limit=None):
     results = []
 
-    with open("./testsAPI/tickets.csv", newline="") as file:
+    #get input from user for Paths
+    while True:
+        inPath = Path(input("in path ")) # "./testsAPI/SelfMadeTickets/tickets.csv" "./testsAPI/askubuntu/tickets.csv"
+        outPath = Path(input("out path ")) # "./testsAPI/SelfMadeTickets/results.csv" "./testsAPI/askubuntu/results.csv"
+        if not inPath.is_file:
+            print("in path must be a file")
+            continue
+        if inPath.suffix.lower() != ".csv":
+            print("in path must be a CSV file")
+            continue
+        break
+    with open(inPath, newline="") as file:
         reader = csv.reader(file)
         for row in reader:
             if len(row) < 6:
                 continue
             if row[1].strip().lower() == "title":
                 continue
+            if limit is not None and len(results) >= limit:
+                break
+            if limit is not None:
+                print(str(len(results) + 1) + "/" + str(limit) )
             print(row[1].strip(), row[2].strip())
             result = (row[1].strip(), row[2].strip(), openAIapicall(row[1].strip(), row[2].strip()), row[3].strip(), row[4].strip(), row[5].strip())
             results.append(result)
 
-    with open("./testsAPI/results.csv", "w", newline="") as file:
+    with open(outPath, "w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(["title", "description", "expected category", "expected priority", "expected resolver_team", "reason", "actual category", "actual priority", "actual resolver_team"])
+        writer.writerow(["title", "description", "expected category", "expected priority", "expected resolver_team", "actual category", "actual priority", "actual resolver_team", "reason", "category same T/F", "resolver same T/F"])
         for result in results:
-            writer.writerow([result[0] , result[1], result[2]["category"], result[2]["priority"], result[2]["resolver_team"], result[2]["reason"].replace(',', ';'), result[3], result[4], result[5]])
+            writer.writerow([result[0] , result[1], result[3], result[4], result[5], result[2]["category"], result[2]["priority"], result[2]["resolver_team"], result[2]["reason"].replace(',', ';'),  str(result[3].strip()).strip().lower() == str(result[2]["category"].strip()).strip().lower(),  str(result[5].strip()).strip().lower() == str(result[2]["resolver_team"].strip()).strip().lower()])
 if __name__  == "__main__":
-    csvTestAPI()
+    csvTestAPI(limit=25)
