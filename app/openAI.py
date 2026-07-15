@@ -75,7 +75,7 @@ def csvTestAPI(limit=None):
 
     #get input from user for Paths
     while True:
-        inPath = Path(input("in path ")) # "./testsAPI/SelfMadeTickets/tickets.csv" "./testsAPI/askubuntu/tickets.csv"
+        inPath = Path(input("in path ")) #   "./testsAPI/SelfMadeTickets/tickets.csv" "./testsAPI/askubuntu/tickets.csv"
         outPath = Path(input("out path ")) # "./testsAPI/SelfMadeTickets/results.csv" "./testsAPI/askubuntu/results.csv"
         if not inPath.is_file:
             print("in path must be a file")
@@ -105,4 +105,4 @@ def csvTestAPI(limit=None):
         for result in results:
             writer.writerow([result[0] , result[1], result[3], result[4], result[5], result[2]["category"], result[2]["priority"], result[2]["resolver_team"], result[2]["reason"].replace(',', ';'),  str(result[3].strip()).strip().lower() == str(result[2]["category"].strip()).strip().lower(),  str(result[5].strip()).strip().lower() == str(result[2]["resolver_team"].strip()).strip().lower()])
 if __name__  == "__main__":
-    csvTestAPI(limit=25)
+    csvTestAPI()
