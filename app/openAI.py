@@ -77,7 +77,7 @@ def csvTestAPI(limit=None):
     while True:
         inPath = Path(input("in path ")) #   "./testsAPI/SelfMadeTickets/tickets.csv" "./testsAPI/askubuntu/tickets.csv"
         outPath = Path(input("out path ")) # "./testsAPI/SelfMadeTickets/results.csv" "./testsAPI/askubuntu/results.csv"
-        if not inPath.is_file:
+        if not inPath.is_file():
             print("in path must be a file")
             continue
         if inPath.suffix.lower() != ".csv":
